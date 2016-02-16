@@ -88,16 +88,15 @@ namespace EtoProject
 			// This is recommended to allow controls to keep their natural platform-specific size.
 			// You can layout your controls declaratively using rows and columns as below, or add to the TableLayout.Rows and TableRow.Cell directly.
 
-			// 
-			var model = new TextBoxModel { String = "Hello!" };
-			var model2 = new CheckBoxModel { Check = false };
+			// ViewModel
+			var model = new ViewModel { String = "Hello!", Check = false, BackgroundColor = Color.Parse ("red") };
 
-			var textBox = new TextBox ();
+            var textBox = new TextBox { BackgroundColor = model.BackgroundColor };
 			textBox.TextBinding.Bind (model, m => m.String);
+			//textBox.Bind(c => c.Enabled, Binding.Delegate(() => BackgroundColor, val => BackgroundColor = val));
 			//textBox.BackgroundColor = Color.Parse ("yellow");
 			var check = new CheckBox ();
-			check.CheckedBinding.Bind (model2, m => m.Check);
-
+			check.CheckedBinding.Bind (model, m => m.Check);
 
 			Content =  new TableLayout
 			{
@@ -114,7 +113,9 @@ namespace EtoProject
 						new TextBox { Text = "Some Text", BackgroundColor = Color.Parse ("Green"), TextColor = Color.Parse ("Red") },	// Changed color of text and bg
 						new DropDown { Items = { "Item 1", "Item 2", "Item 3" } },
 						//new CheckBox { Text = "A checkbox" }
-						new CheckBox { Text = "A checkbox", Checked = true },
+						new CheckBox { Text = "A checkbox", Checked = true }
+					),
+					new TableRow (
 						textBox,
 						check
 					),
@@ -128,6 +129,7 @@ namespace EtoProject
 					null	//new TableRow { ScaleHeight = true }
 				}
 			};
+			
 			// Set data context so it propegates to all child controls
 			/*
 			DataContext = model1;
@@ -154,10 +156,12 @@ namespace EtoProject
 
 
 	// Typically implemented view model
-	public class TextBoxModel
+	public class ViewModel
 	{
 		string _string;
+		bool _isChecked;
 		Color _color;
+
 		public string String
 		{
 			get { return _string; }
@@ -170,26 +174,7 @@ namespace EtoProject
 				}
 			}
 		}
-
-		// Not implemented
-		public Color BackgroundColor
-		{
-			get { return _color; }
-			set
-			{
-				if (_color != value)
-				{
-					_color = value;
-					Debug.WriteLine(string.Format("Set bg color to {0}", value));
-				}
-			}
-		}
-	}
-
-	// Typically implemented view model 
-	public class CheckBoxModel
-	{
-		bool _isChecked;
+			
 		public bool Check
 		{
 			get { return _isChecked; }
@@ -199,6 +184,28 @@ namespace EtoProject
 				{
 					_isChecked = value;
 					Debug.WriteLine(string.Format("isChecked: {0}", value));
+                    if (_isChecked)
+                    {
+                        _color = Color.Parse("green");
+                    }
+                    else
+                    {
+                        _color = Color.Parse("red");
+                    }
+						
+				}
+			}
+		}
+
+		public Color BackgroundColor
+		{
+			get { return _color; }
+			set
+			{
+				if (_color != value)
+				{
+					_color = value;
+					Debug.WriteLine(string.Format("Set bg color to {0}", value));
 				}
 			}
 		}
