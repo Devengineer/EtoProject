@@ -85,26 +85,22 @@ namespace EtoProject
 			};
 
 
-			// The main layout mechanism for Eto.Forms is a TableLayout.
-			// This is recommended to allow controls to keep their natural platform-specific size.
-			// You can layout your controls declaratively using rows and columns as below, or add to the TableLayout.Rows and TableRow.Cell directly.
-
 			// ViewModel
 			var model = new ViewModel { String = "Hello!", Check = false, BackgroundColor = Color.Parse ("white") };
 
-			var bg = Color.Parse("black");	// Test
 			var textBox = new TextBox ();
 			textBox.TextBinding.Bind (model, m => m.String);	// Working
-			//textBox.Bind<Color>("Color", model.BackgroundColor);
-			//textBox.Bind<Color>(c => c.BackgroundColor, model, m => m.BackgroundColor);
-			//textBox.Bind(c => c.BackgroundColor, Binding.Delegate(() => model.BackgroundColor, val => model.BackgroundColor = val));
-			//textBox.Bind<Color>(textBox.BackgroundColor, model, model.BackgroundColor);
-			textBox.Bind(c => c.BackgroundColor, Binding.Delegate(() => model.BackgroundColor, val => model.BackgroundColor = val));
-			//textBox.BackgroundColor = Color.Parse ("yellow");
+			//textBox.Bind(c => c.Text, model, (ViewModel m) => m.String);	// Perfect TwoWay bind
+			textBox.Bind(c => c.BackgroundColor, model, (ViewModel m) => m.BackgroundColor);	// Working
+
 			var check = new CheckBox ();
 			//check.CheckedBinding.BindDataContext((ViewModel m) => m.Check);	//Working Context
 			check.CheckedBinding.Bind (model, m => m.Check);	// Working
 
+
+			// The main layout mechanism for Eto.Forms is a TableLayout.
+			// This is recommended to allow controls to keep their natural platform-specific size.
+			// You can layout your controls declaratively using rows and columns as below, or add to the TableLayout.Rows and TableRow.Cell directly.
 			Content =  new TableLayout
 			{
 				Spacing = new Size (5, 5),	// Space between each cell
@@ -202,7 +198,9 @@ namespace EtoProject
 						BackgroundColor = Color.Parse("red");
 						String = "False";
                     }
-						
+
+					// Updating bindings manually
+					Application.Instance.MainForm.UpdateBindings(BindingUpdateMode.Destination);
 				}
 			}
 		}
