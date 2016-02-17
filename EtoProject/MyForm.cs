@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.ComponentModel;
 using Eto.Forms;
 using Eto.Drawing;
 
@@ -89,14 +90,20 @@ namespace EtoProject
 			// You can layout your controls declaratively using rows and columns as below, or add to the TableLayout.Rows and TableRow.Cell directly.
 
 			// ViewModel
-			var model = new ViewModel { String = "Hello!", Check = false, BackgroundColor = Color.Parse ("red") };
+			var model = new ViewModel { String = "Hello!", Check = false, BackgroundColor = Color.Parse ("white") };
 
-            var textBox = new TextBox { BackgroundColor = model.BackgroundColor };
-			textBox.TextBinding.Bind (model, m => m.String);
-			//textBox.Bind(c => c.Enabled, Binding.Delegate(() => BackgroundColor, val => BackgroundColor = val));
+			var bg = Color.Parse("black");	// Test
+			var textBox = new TextBox ();
+			textBox.TextBinding.Bind (model, m => m.String);	// Working
+			//textBox.Bind<Color>("Color", model.BackgroundColor);
+			//textBox.Bind<Color>(c => c.BackgroundColor, model, m => m.BackgroundColor);
+			//textBox.Bind(c => c.BackgroundColor, Binding.Delegate(() => model.BackgroundColor, val => model.BackgroundColor = val));
+			//textBox.Bind<Color>(textBox.BackgroundColor, model, model.BackgroundColor);
+			//textBox.Bind(c => c.Enabled, Binding.Delegate(() => bg, val => bg = val));
 			//textBox.BackgroundColor = Color.Parse ("yellow");
 			var check = new CheckBox ();
-			check.CheckedBinding.Bind (model, m => m.Check);
+			//check.CheckedBinding.BindDataContext((ViewModel m) => m.Check);	//Working Context
+			check.CheckedBinding.Bind (model, m => m.Check);	// Working
 
 			Content =  new TableLayout
 			{
@@ -132,7 +139,8 @@ namespace EtoProject
 			
 			// Set data context so it propegates to all child controls
 			/*
-			DataContext = model1;
+			var model = new ViewModel { String = "Hello!", Check = false, BackgroundColor = Color.Parse ("white") };
+			DataContext = model;
 			*/
 
 			// This creates the following layout:
@@ -156,7 +164,7 @@ namespace EtoProject
 
 
 	// Typically implemented view model
-	public class ViewModel
+	public class ViewModel : INotifyPropertyChanged
 	{
 		string _string;
 		bool _isChecked;
@@ -169,8 +177,9 @@ namespace EtoProject
 			{
 				if (_string != value)
 				{
-					_string = value;
+					SetField(ref _string, value, "String");
 					Debug.WriteLine(string.Format("Set TextProperty to {0}", value));
+					OnPropertyChanged("String");
 				}
 			}
 		}
@@ -182,16 +191,19 @@ namespace EtoProject
 			{
 				if (_isChecked != value)
 				{
-					_isChecked = value;
+					SetField(ref _isChecked, value, "Check");
 					Debug.WriteLine(string.Format("isChecked: {0}", value));
                     if (_isChecked)
                     {
-                        _color = Color.Parse("green");
+						BackgroundColor = Color.Parse("green");
+						String = "True";
                     }
                     else
                     {
-                        _color = Color.Parse("red");
+						BackgroundColor = Color.Parse("red");
+						String = "False";
                     }
+					OnPropertyChanged("Check");
 						
 				}
 			}
@@ -204,10 +216,32 @@ namespace EtoProject
 			{
 				if (_color != value)
 				{
-					_color = value;
+					SetField(ref _color, value, "Color");
 					Debug.WriteLine(string.Format("Set bg color to {0}", value));
+					OnPropertyChanged("Color");
 				}
 			}
+		}
+		/*
+		void OnPropertyChanged([CallerMemberName] string memberName = null)
+		{
+			PropertyChanged.Invoke(this, new PropertyChangedEventArgs(memberName));
+		}
+		*/
+		protected virtual void OnPropertyChanged(string propertyName)
+		{
+			PropertyChangedEventHandler handler = PropertyChanged;
+			if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+		}
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		protected bool SetField<T>(ref T field, T value, string propertyName)
+		{
+			if (EqualityComparer<T>.Default.Equals(field, value)) return false;
+			field = value;
+			OnPropertyChanged(propertyName);
+			return true;
 		}
 	}
 }
