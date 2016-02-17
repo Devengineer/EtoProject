@@ -97,6 +97,12 @@ namespace EtoProject
 			//check.CheckedBinding.BindDataContext((ViewModel m) => m.Check);	//Working Context
 			check.CheckedBinding.Bind (model, m => m.Check);	// Working
 
+			var slider = new Slider { TickFrequency = 10 };
+			slider.Bind(c => c.Value, model, (ViewModel m) => m.Value);
+
+			var progressBar = new ProgressBar();
+			progressBar.Bind(c => c.Value, model, (ViewModel m) => m.Value);
+
 
 			// The main layout mechanism for Eto.Forms is a TableLayout.
 			// This is recommended to allow controls to keep their natural platform-specific size.
@@ -123,8 +129,8 @@ namespace EtoProject
 						check
 					),
 					new TableRow (
-						new Slider { Value = 50, TickFrequency = 20 },
-						new ProgressBar { Value = 50 }
+						slider,
+						progressBar
 					),
 
 					// By default, the last row & column will get scaled. This adds a row at the end to take the extra space of the form.
@@ -165,6 +171,7 @@ namespace EtoProject
 		string _string;
 		bool _isChecked;
 		Color _color;
+		int _value = 50;
 
 		public string String
 		{
@@ -223,6 +230,19 @@ namespace EtoProject
 				{
 					SetField(ref _color, value, "Color");
 					Debug.WriteLine(string.Format("Set bg color to {0}", value));
+				}
+			}
+		}
+
+		public int Value
+		{
+			get { return _value; }
+			set
+			{
+				if (_value != value)
+				{
+					SetField(ref _value, value, "Value");
+					Debug.WriteLine(string.Format("Set Value to {0}", value));
 				}
 			}
 		}
