@@ -99,7 +99,7 @@ namespace EtoProject
 			//textBox.Bind<Color>(c => c.BackgroundColor, model, m => m.BackgroundColor);
 			//textBox.Bind(c => c.BackgroundColor, Binding.Delegate(() => model.BackgroundColor, val => model.BackgroundColor = val));
 			//textBox.Bind<Color>(textBox.BackgroundColor, model, model.BackgroundColor);
-			//textBox.Bind(c => c.Enabled, Binding.Delegate(() => bg, val => bg = val));
+			textBox.Bind(c => c.BackgroundColor, Binding.Delegate(() => model.BackgroundColor, val => model.BackgroundColor = val));
 			//textBox.BackgroundColor = Color.Parse ("yellow");
 			var check = new CheckBox ();
 			//check.CheckedBinding.BindDataContext((ViewModel m) => m.Check);	//Working Context
@@ -179,7 +179,6 @@ namespace EtoProject
 				{
 					SetField(ref _string, value, "String");
 					Debug.WriteLine(string.Format("Set TextProperty to {0}", value));
-					OnPropertyChanged("String");
 				}
 			}
 		}
@@ -203,7 +202,6 @@ namespace EtoProject
 						BackgroundColor = Color.Parse("red");
 						String = "False";
                     }
-					OnPropertyChanged("Check");
 						
 				}
 			}
@@ -218,16 +216,18 @@ namespace EtoProject
 				{
 					SetField(ref _color, value, "Color");
 					Debug.WriteLine(string.Format("Set bg color to {0}", value));
-					OnPropertyChanged("Color");
 				}
 			}
 		}
+
+		// C# 6.0 makes the implementation easier
 		/*
 		void OnPropertyChanged([CallerMemberName] string memberName = null)
 		{
 			PropertyChanged.Invoke(this, new PropertyChangedEventArgs(memberName));
 		}
 		*/
+
 		protected virtual void OnPropertyChanged(string propertyName)
 		{
 			PropertyChangedEventHandler handler = PropertyChanged;
