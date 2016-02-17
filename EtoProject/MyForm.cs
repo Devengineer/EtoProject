@@ -175,6 +175,15 @@ namespace EtoProject
 				{
 					SetField(ref _string, value, "String");
 					Debug.WriteLine(string.Format("Set TextProperty to {0}", value));
+					Color.TryParse(_string, out _color);
+					try
+					{
+						Application.Instance.MainForm.UpdateBindings(BindingUpdateMode.Destination);
+					}
+					catch (Exception e)
+					{
+						Debug.WriteLine(string.Format("Exception: {0}", e));
+					}
 				}
 			}
 		}
