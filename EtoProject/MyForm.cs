@@ -86,7 +86,7 @@ namespace EtoProject
 
 
 			// ViewModel
-			var model = new ViewModel { String = "Hello!", Check = false, BackgroundColor = Color.Parse ("white") };
+			var model = new ViewModel { String = "Hello!", Check = false, BackgroundColor = this.BackgroundColor };
 
 			var textBox = new TextBox ();
 			textBox.TextBinding.Bind (model, m => m.String);	// Working
@@ -102,6 +102,8 @@ namespace EtoProject
 
 			var progressBar = new ProgressBar();
 			progressBar.Bind(c => c.Value, model, (ViewModel m) => m.Value);
+
+			this.Bind(c => c.BackgroundColor, model, (ViewModel m) => m.BackgroundColor);
 
 
 			// The main layout mechanism for Eto.Forms is a TableLayout.
@@ -170,9 +172,13 @@ namespace EtoProject
 	{
 		string _string;
 		bool _isChecked;
-		Color _color;
+		Color _backgroundColor;
 		int _value = 50;
 
+		/// <summary>
+		/// Gets or sets the string.
+		/// </summary>
+		/// <value>The string.</value>
 		public string String
 		{
 			get { return _string; }
@@ -182,7 +188,11 @@ namespace EtoProject
 				{
 					SetField(ref _string, value, "String");
 					Debug.WriteLine(string.Format("Set TextProperty to {0}", value));
-					Color.TryParse(_string, out _color);
+					Color newColor = new Color();
+					if (Color.TryParse(_string, out newColor) && newColor != Color.FromArgb(0x000000))
+					{
+						BackgroundColor = newColor;
+					}
 					try
 					{
 						Application.Instance.MainForm.UpdateBindings(BindingUpdateMode.Destination);
@@ -194,7 +204,11 @@ namespace EtoProject
 				}
 			}
 		}
-			
+
+		/// <summary>
+		/// Gets or sets a value is check.
+		/// </summary>
+		/// <value><c>true</c> if check; otherwise, <c>false</c>.</value>
 		public bool Check
 		{
 			get { return _isChecked; }
@@ -206,12 +220,12 @@ namespace EtoProject
 					Debug.WriteLine(string.Format("isChecked: {0}", value));
                     if (_isChecked)
                     {
-						BackgroundColor = Color.Parse("green");
+						//BackgroundColor = Color.Parse("green");
 						String = "True";
                     }
                     else
                     {
-						BackgroundColor = Color.Parse("red");
+						//BackgroundColor = Color.Parse("red");
 						String = "False";
                     }
 
@@ -221,19 +235,27 @@ namespace EtoProject
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the color of the background.
+		/// </summary>
+		/// <value>The color of the background.</value>
 		public Color BackgroundColor
 		{
-			get { return _color; }
+			get { return _backgroundColor; }
 			set
 			{
-				if (_color != value)
+				if (_backgroundColor != value)
 				{
-					SetField(ref _color, value, "Color");
-					Debug.WriteLine(string.Format("Set bg color to {0}", value));
+					SetField(ref _backgroundColor, value, "BackgroundColor");
+					Debug.WriteLine(string.Format("Set background color to {0}", value));
 				}
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the value.
+		/// </summary>
+		/// <value>The value.</value>
 		public int Value
 		{
 			get { return _value; }
