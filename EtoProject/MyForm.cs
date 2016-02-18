@@ -210,20 +210,8 @@ namespace EtoProject
 
 		public void LoopColorAsync()
 		{
-			List<string> colors = new List<string>();
-			colors.Add("red");
-			colors.Add("green");
-			colors.Add("blue");
-			colors.Add("yellow");
-			colors.Add("purple");
-			colors.Add("coral");
-			colors.Add("lime");
-			colors.Add("white");
-			colors.Add("black");
-			colors.Add("orange");
-			colors.Add("pink");
-			colors.Add("cyan");
-			colors.Add("crimson");
+			// Create a list of strings (colors)
+			List<string> colors = new List<string> { "red", "green", "blue", "yellow", "purple", "coral", "lime", "white", "black", "orange", "pink", "cyan", "crimson" };
 
 			foreach (string color in colors)
 			{
@@ -232,6 +220,11 @@ namespace EtoProject
 			}
 		}
 
+		/// <summary>
+		/// Raises the clicked event.
+		/// </summary>
+		/// <param name="sender">Sender.</param>
+		/// <param name="e">E.</param>
 		public void OnClicked(object sender, EventArgs e)
 		{
 			this.LoopColorAsync();
