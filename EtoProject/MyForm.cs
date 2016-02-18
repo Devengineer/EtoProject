@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.ComponentModel;
+using System.Threading;
+using System.Threading.Tasks;
 using Eto.Forms;
 using Eto.Drawing;
 
@@ -25,6 +27,25 @@ namespace EtoProject
 
 			MessageBox.Show(Application.Instance.MainForm, "You clicked me!", "Wow!", MessageBoxButtons.OK);
 		}
+	}
+
+
+	public class ColorButton : Button
+	{
+		public ColorButton()
+		{
+			Text = "Rainbow!";
+			TextColor = Color.Parse("crimson");
+			BackgroundColor = Color.Parse("pink");
+
+		}
+
+		/*
+		protected override void OnClick (EventArgs e)
+		{
+			Click(this, e);
+		}
+		*/
 	}
 
 		
@@ -105,6 +126,11 @@ namespace EtoProject
 
 			this.Bind(c => c.BackgroundColor, model, (ViewModel m) => m.BackgroundColor);
 
+			var button = new ColorButton();
+			button.Click += model.OnClicked;
+			//var button = new Button { Text = "Rainbow!" };
+			//button = new Command((sender, e) => model.LoopColor());
+
 
 			// The main layout mechanism for Eto.Forms is a TableLayout.
 			// This is recommended to allow controls to keep their natural platform-specific size.
@@ -132,7 +158,8 @@ namespace EtoProject
 					),
 					new TableRow (
 						slider,
-						progressBar
+						progressBar,
+						button
 					),
 
 					// By default, the last row & column will get scaled. This adds a row at the end to take the extra space of the form.
@@ -164,6 +191,12 @@ namespace EtoProject
 			//  4. If a row/column is not scaled, it will be the size of the largest control in that row/column.
 			//  5. A Control can be implicitly converted to a TableCell or TableRow to make the layout more concise.
 		}
+
+		/*
+		void Button_Click (object sender, EventArgs e)
+		{
+		}
+		*/
 	}
 
 
@@ -174,6 +207,35 @@ namespace EtoProject
 		bool _isChecked;
 		Color _backgroundColor;
 		int _value = 50;
+
+		public void LoopColorAsync()
+		{
+			List<string> colors = new List<string>();
+			colors.Add("red");
+			colors.Add("green");
+			colors.Add("blue");
+			colors.Add("yellow");
+			colors.Add("purple");
+			colors.Add("coral");
+			colors.Add("lime");
+			colors.Add("white");
+			colors.Add("black");
+			colors.Add("orange");
+			colors.Add("pink");
+			colors.Add("cyan");
+			colors.Add("crimson");
+
+			foreach (string color in colors)
+			{
+				Thread.Sleep(200);
+				String = color;
+			}
+		}
+
+		public void OnClicked(object sender, EventArgs e)
+		{
+			this.LoopColorAsync();
+		}
 
 		/// <summary>
 		/// Gets or sets the string.
