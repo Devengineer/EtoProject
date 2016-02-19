@@ -208,16 +208,32 @@ namespace EtoProject
 		Color _backgroundColor;
 		int _value = 50;
 
-		public void LoopColorAsync()
+		/// <summary>
+		/// Loops the color async.
+		/// </summary>
+		public async void LoopColorAsync()
 		{
 			// Create a list of strings (colors)
 			List<string> colors = new List<string> { "red", "green", "blue", "yellow", "purple", "coral", "lime", "white", "black", "orange", "pink", "cyan", "crimson" };
 
+			// Iterate through the list of colors
 			foreach (string color in colors)
 			{
-				Thread.Sleep(200);
 				String = color;
+				await SleepTask();
 			}
+		}
+
+		/// <summary>
+		/// Sleeps the task.
+		/// </summary>
+		/// <returns>The task.</returns>
+		Task SleepTask()
+		{
+			return Task.Run(() =>
+			{
+				Thread.Sleep(200);
+			});
 		}
 
 		/// <summary>
