@@ -159,7 +159,8 @@ namespace EtoProject
 					new TableRow (
 						slider,
 						progressBar,
-						button
+						button,
+						new CheckBox { Text = "New checkbox", Checked = false }
 					),
 
 					// By default, the last row & column will get scaled. This adds a row at the end to take the extra space of the form.
