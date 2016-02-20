@@ -11,7 +11,7 @@ namespace EtoProject
 {
 	public class MyCommand : Command
 	{
-		public MyCommand ()
+		public MyCommand()
 		{
 			MenuText = "C&lick Me, Command";
 			ToolBarText = "Click Me";
@@ -21,7 +21,7 @@ namespace EtoProject
 			Shortcut = Application.Instance.CommonModifier | Keys.M;  // control+M or cmd+M
 		}
 
-		protected override void OnExecuted (EventArgs e)
+		protected override void OnExecuted(EventArgs e)
 		{
 			base.OnExecuted(e);
 
@@ -30,31 +30,27 @@ namespace EtoProject
 	}
 
 
+	/// <summary>
+	/// Color button.
+	/// </summary>
 	public class ColorButton : Button
 	{
 		public ColorButton()
 		{
 			Text = "Rainbow!";
 			TextColor = Color.Parse("crimson");
-			BackgroundColor = Color.Parse("pink");
+			BackgroundColor = Color.Parse("yellow");
 
 		}
-
-		/*
-		protected override void OnClick (EventArgs e)
-		{
-			Click(this, e);
-		}
-		*/
 	}
 
 		
 	public class MyForm : Form
 	{
-		public MyForm ()
+		public MyForm()
 		{
 			// Set ClientSize instead of Size, as each platform has different window border sizes
-			ClientSize = new Size (600, 400);
+			ClientSize = new Size(600, 400);
 
 			// Title to show in the title bar
 			Title = "Menus and Toolbars";
@@ -70,7 +66,7 @@ namespace EtoProject
 						Items =
 						{
 							// You can add commands or menu items
-							new MyCommand (),
+							new MyCommand(),
 
 							// Another menu item, not based off a Command
 							new ButtonMenuItem { Text = "Click Me, MenuItem" }
@@ -89,7 +85,7 @@ namespace EtoProject
 				AboutItem = new Command((sender, e) => new Dialog
 				{
 					Content = new Label { Text = "About my app..." },
-					ClientSize = new Size (200, 200)
+					ClientSize = new Size(200, 200)
 				}.ShowModal(this))
 				{
 					MenuText = "About my app"
@@ -99,8 +95,8 @@ namespace EtoProject
 			// Create toolbar
 			ToolBar = new ToolBar {
 				Items = {
-					new MyCommand (),
-					new SeparatorToolItem (),
+					new MyCommand(),
+					new SeparatorToolItem(),
 					new ButtonToolItem { Text = "Click Me, ToolItem" }
 				}
 			};
@@ -109,27 +105,29 @@ namespace EtoProject
 			// ViewModel
 			var model = new ViewModel { String = "Hello!", Check = false, BackgroundColor = this.BackgroundColor };
 
-			var textBox = new TextBox ();
-			textBox.TextBinding.Bind (model, m => m.String);	// Working
-			//textBox.Bind(c => c.Text, model, (ViewModel m) => m.String);	// Perfect TwoWay bind
-			textBox.Bind(c => c.BackgroundColor, model, (ViewModel m) => m.BackgroundColor);	// Working
+			// TextBox
+			var textBox = new TextBox();
+			textBox.TextBinding.Bind(model, m => m.String);
+			textBox.Bind(c => c.BackgroundColor, model, (ViewModel m) => m.BackgroundColor);
 
-			var check = new CheckBox ();
-			//check.CheckedBinding.BindDataContext((ViewModel m) => m.Check);	//Working Context
-			check.CheckedBinding.Bind (model, m => m.Check);	// Working
+			// CheckBox
+			var check = new CheckBox();
+			check.CheckedBinding.Bind(model, m => m.Check);
 
+			// Slider
 			var slider = new Slider { TickFrequency = 10 };
 			slider.Bind(c => c.Value, model, (ViewModel m) => m.Value);
 
+			// ProgressBar
 			var progressBar = new ProgressBar();
 			progressBar.Bind(c => c.Value, model, (ViewModel m) => m.Value);
 
+			// Binding model and form background
 			this.Bind(c => c.BackgroundColor, model, (ViewModel m) => m.BackgroundColor);
 
+			// Button with event
 			var button = new ColorButton();
 			button.Click += model.OnClicked;
-			//var button = new Button { Text = "Rainbow!" };
-			//button = new Command((sender, e) => model.LoopColor());
 
 
 			// The main layout mechanism for Eto.Forms is a TableLayout.
@@ -137,26 +135,26 @@ namespace EtoProject
 			// You can layout your controls declaratively using rows and columns as below, or add to the TableLayout.Rows and TableRow.Cell directly.
 			Content =  new TableLayout
 			{
-				Spacing = new Size (5, 5),	// Space between each cell
-				Padding = new Padding (10, 10, 10, 10),	// Space around the table's sides
+				Spacing = new Size(5, 5),	// Space between each cell
+				Padding = new Padding(10, 10, 10, 10),	// Space around the table's sides
 				Rows =
 				{
-					new TableRow (
-						new TableCell (new Label { Text = "First Column" }, true),
-						new TableCell (new Label { Text = "Second Column" }, true),
+					new TableRow(
+						new TableCell(new Label { Text = "First Column" }, true),
+						new TableCell(new Label { Text = "Second Column" }, true),
 						new Label { Text = "Third Column" }
 					),
-					new TableRow (
-						new TextBox { Text = "Some Text", BackgroundColor = Color.Parse ("Green"), TextColor = Color.Parse ("Red") },	// Changed color of text and bg
+					new TableRow(
+						new TextBox { Text = "Some Text", BackgroundColor = Color.Parse("Green"), TextColor = Color.Parse("Red") },	// Changed color of text and bg
 						new DropDown { Items = { "Item 1", "Item 2", "Item 3" } },
 						//new CheckBox { Text = "A checkbox" }
 						new CheckBox { Text = "A checkbox", Checked = true }
 					),
-					new TableRow (
+					new TableRow(
 						textBox,
 						check
 					),
-					new TableRow (
+					new TableRow(
 						slider,
 						progressBar,
 						button
@@ -170,7 +168,7 @@ namespace EtoProject
 			
 			// Set data context so it propegates to all child controls
 			/*
-			var model = new ViewModel { String = "Hello!", Check = false, BackgroundColor = Color.Parse ("white") };
+			var model = new ViewModel { String = "Hello!", Check = false, BackgroundColor = this.BackgroundColor };
 			DataContext = model;
 			*/
 
@@ -351,14 +349,28 @@ namespace EtoProject
 		protected virtual void OnPropertyChanged(string propertyName)
 		{
 			PropertyChangedEventHandler handler = PropertyChanged;
-			if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+			if (handler != null)
+			{
+				handler(this, new PropertyChangedEventArgs(propertyName));
+			}
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
+		/// <summary>
+		/// Sets the field.
+		/// </summary>
+		/// <returns><c>true</c>, if field was set, <c>false</c> otherwise.</returns>
+		/// <param name="field">Field.</param>
+		/// <param name="value">Value.</param>
+		/// <param name="propertyName">Property name.</param>
+		/// <typeparam name="T">The 1st type parameter.</typeparam>
 		protected bool SetField<T>(ref T field, T value, string propertyName)
 		{
-			if (EqualityComparer<T>.Default.Equals(field, value)) return false;
+			if (EqualityComparer<T>.Default.Equals(field, value))
+			{
+				return false;
+			}
 			field = value;
 			OnPropertyChanged(propertyName);
 			return true;
