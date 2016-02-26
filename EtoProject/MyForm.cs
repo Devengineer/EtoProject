@@ -133,6 +133,22 @@ namespace EtoProject
 			// The main layout mechanism for Eto.Forms is a TableLayout.
 			// This is recommended to allow controls to keep their natural platform-specific size.
 			// You can layout your controls declaratively using rows and columns as below, or add to the TableLayout.Rows and TableRow.Cell directly.
+
+			var layout = new DynamicLayout();
+
+			layout.BeginVertical();	// field section
+			layout.AddRow(new Label { Text = "Field 1" }, new TextBox());
+			layout.AddRow(new Label { Text = "Field 2" }, new ComboBox());
+			layout.EndVertical();
+
+			layout.BeginVertical();	// button section
+			// Passing null in AddRow() creates a scaled column
+			layout.AddRow(null, new Button { Text = "Cancel" }, new Button { Text = "Ok" });
+			layout.EndVertical();
+
+			Content = layout;
+
+			/*
 			Content =  new TableLayout
 			{
 				Spacing = new Size(5, 5),	// Space between each cell
@@ -165,6 +181,7 @@ namespace EtoProject
 					null	//new TableRow { ScaleHeight = true }
 				}
 			};
+			*/
 			
 			// Set data context so it propegates to all child controls
 			/*
